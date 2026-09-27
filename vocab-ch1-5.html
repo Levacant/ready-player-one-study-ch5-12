@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>RPO Ch. 1–5 Vocab Study</title>
+<style>
+:root{--bg:#0b1020;--card:#151c33;--text:#f4f7ff;--muted:#a9b3cf;--accent:#7dd3fc;--good:#86efac;--bad:#fca5a5;--line:#2a3558}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#0b1020,#11182b);color:var(--text)}
+.wrap{max-width:720px;margin:auto;padding:16px 14px 80px}.top{position:sticky;top:0;z-index:10;background:rgba(11,16,32,.92);backdrop-filter:blur(12px);padding:12px 0 10px;border-bottom:1px solid var(--line)}
+h1{font-size:24px;margin:0 0 4px}.sub{color:var(--muted);font-size:14px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.tab,.btn{border:1px solid var(--line);background:#121a2f;color:var(--text);border-radius:14px;padding:12px 10px;font-weight:700}.tab.active{background:var(--accent);color:#07111c}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:14px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.word{font-size:30px;font-weight:900}.pos{display:inline-block;margin-top:8px;padding:5px 9px;border-radius:999px;background:#223053;color:#c9d4ff;font-size:12px;font-weight:700}.def{font-size:18px;line-height:1.45;margin:14px 0}.memory{color:var(--accent);font-weight:800}.choice{width:100%;text-align:left;margin:8px 0;padding:14px;border-radius:14px;border:1px solid var(--line);background:#10172a;color:var(--text);font-size:16px}.choice.correct{border-color:#22c55e;background:#12311f}.choice.wrong{border-color:#ef4444;background:#381819}.row{display:flex;gap:10px}.row>*{flex:1}.score{font-weight:900;font-size:18px}.small{font-size:13px;color:var(--muted)}.input{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:#0e1528;color:var(--text);font-size:17px}.answer{margin-top:12px;padding:12px;border-radius:12px;background:#0f172a}.good{color:var(--good)}.bad{color:var(--bad)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pill{padding:10px;border:1px solid var(--line);border-radius:12px;background:#10172a}.footer{margin-top:20px;color:var(--muted);font-size:12px;text-align:center}@media(max-width:520px){.tabs{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.word{font-size:27px}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="top"><h1>Ready Player One — Ch. 1–5 Vocab</h1><div class="sub">13 teacher words • phone study mode</div></div>
+<div class="tabs"><button class="tab active" data-mode="learn">Learn</button><button class="tab" data-mode="mc">Test</button><button class="tab" data-mode="fill">Fill-in</button><button class="tab" data-mode="cram">Cram</button></div>
+<div id="app"></div><div class="footer">Your progress is saved on this device.</div></div>
+<script>
+const words=[
+{w:'eccentric',p:'adjective',d:'unusual or noticeably odd',m:'odd / unusual',s:'With his mismatched socks, purple hair, and antique robots, the man was so ___ that everyone knew him.'},
+{w:'obscure',p:'adjective',d:'difficult to understand; partially hidden',m:'unclear / hidden',s:'Because the reference was so ___, only a few devoted video-game fans understood it.'},
+{w:'labyrinth',p:'noun',d:'a complicated network of winding passages; a maze',m:'maze',s:'The underground ___ contained so many twisting passages that explorers struggled to find the entrance.'},
+{w:'diatribe',p:'noun',d:'a bitter and prolonged verbal attack',m:'angry rant',s:'The customer launched into an angry ___ against the manager.'},
+{w:'denounce',p:'verb',d:'to speak out against; to condemn',m:'condemn',s:'The mayor publicly ___ the restaurant after inspectors found spoiled food.'},
+{w:'fervor',p:'noun',d:'feelings of great warmth and intensity',m:'strong passion',s:'The fans cheered with such ___ that the entire stadium seemed to shake.'},
+{w:'reverence',p:'noun',d:'deep respect for someone or something',m:'deep respect',s:'The students spoke of Halliday with ___, treating him almost like a legendary hero.'},
+{w:'frenetic',p:'adjective',d:'frenzied; highly agitated',m:'chaotic / frantic',s:'The kitchen became ___ during the dinner rush, with cooks shouting and servers hurrying.'},
+{w:'lucid',p:'adjective',d:'easy to understand, clear; rational, sane',m:'clear',s:'The professor gave such a ___ explanation that everyone understood it.'},
+{w:'refuge',p:'noun',d:'a safe place; shelter',m:'shelter / safety',s:'During the storm, the hikers found ___ inside a small cabin.'},
+{w:'pervasive',p:'adjective',d:'widespread; distributed everywhere',m:'everywhere',s:'Smartphone influence has become ___ in nearly every part of modern life.'},
+{w:'amass',p:'verb',d:'to bring together, collect, gather',m:'collect a lot',s:'Halliday managed to ___ an enormous fortune over several years.'},
+{w:'discernible',p:'adjective',d:'distinguishable; able to tell apart',m:'noticeable',s:'There was a ___ change in Wade’s expression when he heard the news.'}
+];
+let mode='learn',idx=0,score=0,answered=0,missed=JSON.parse(localStorage.getItem('rpoVocabMissed')||'[]');
+const app=document.getElementById('app');
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function setMode(m){mode=m;idx=0;score=0;answered=0;render();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m))}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setMode(t.dataset.mode));
+function nav(){return `<div class="row" style="margin-top:14px"><button class="btn" onclick="prev()">← Back</button><button class="btn" onclick="next()">Next →</button></div>`}
+function prev(){idx=(idx-1+words.length)%words.length;render()} function next(){idx=(idx+1)%words.length;render()}
+function render(){if(mode==='learn')learn();if(mode==='mc')mc();if(mode==='fill')fill();if(mode==='cram')cram()}
+function learn(){let x=words[idx];app.innerHTML=`<div class="card"><div class="small">${idx+1} / ${words.length}</div><div class="word">${x.w}</div><div class="pos">${x.p}</div><div class="def">${x.d}</div><div class="memory">Memory: ${x.m}</div><div class="answer" style="margin-top:16px">${x.s}</div>${nav()}</div>`}
+function mc(){let x=words[idx], wrong=shuffle(words.filter(y=>y.w!==x.w)).slice(0,3).map(y=>y.w),opts=shuffle([x.w,...wrong]);app.innerHTML=`<div class="card"><div class="score">Score: ${score}/${answered}</div><div class="small">Question ${idx+1} of ${words.length}</div><div class="def">${x.d}</div><div class="small">Choose the correct word:</div>${opts.map(o=>`<button class="choice" onclick="checkMC(this,'${o}','${x.w}')">${o}</button>`).join('')}<div id="fb"></div></div>`}
+function checkMC(btn,pick,ans){if(document.querySelector('.choice.correct'))return;answered++;if(pick===ans){score++;btn.classList.add('correct');document.getElementById('fb').innerHTML='<div class="answer good">Correct ✓</div>'}else{btn.classList.add('wrong');[...document.querySelectorAll('.choice')].find(b=>b.textContent===ans).classList.add('correct');document.getElementById('fb').innerHTML=`<div class="answer bad">Answer: ${ans}</div>`;miss(ans)}setTimeout(()=>{idx++;if(idx>=words.length){finish()}else render()},900)}
+function fill(){let x=words[idx];app.innerHTML=`<div class="card"><div class="score">Score: ${score}/${answered}</div><div class="small">Question ${idx+1} of ${words.length}</div><div class="def">${x.s}</div><input id="fillIn" class="input" autocomplete="off" autocapitalize="none" placeholder="Type the vocab word"><button class="btn" style="width:100%;margin-top:10px" onclick="checkFill()">Check</button><div id="fb"></div></div>`;document.getElementById('fillIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkFill()})}
+function checkFill(){let x=words[idx],v=document.getElementById('fillIn').value.trim().toLowerCase();if(!v)return;answered++;if(v===x.w){score++;document.getElementById('fb').innerHTML='<div class="answer good">Correct ✓</div>'}else{document.getElementById('fb').innerHTML=`<div class="answer bad">Correct answer: <b>${x.w}</b></div>`;miss(x.w)}setTimeout(()=>{idx++;if(idx>=words.length)finish();else render()},1000)}
+function miss(w){if(!missed.includes(w))missed.push(w);localStorage.setItem('rpoVocabMissed',JSON.stringify(missed))}
+function finish(){app.innerHTML=`<div class="card"><div class="word">Finished</div><div class="def">You got <b>${score}/${answered}</b>.</div><div class="small">Missed words saved: ${missed.length}</div><div class="row" style="margin-top:14px"><button class="btn" onclick="setMode(mode)">Try again</button><button class="btn" onclick="studyMissed()">Study missed</button></div></div>`}
+function studyMissed(){let list=words.filter(x=>missed.includes(x.w));if(!list.length){app.innerHTML='<div class="card"><div class="word">No missed words 🎉</div></div>';return}app.innerHTML=`<div class="card"><div class="word">Missed Words</div>${list.map(x=>`<div class="pill" style="margin-top:9px"><b>${x.w}</b> — ${x.d}<br><span class="small">${x.m}</span></div>`).join('')}<button class="btn" style="width:100%;margin-top:14px" onclick="missed=[];localStorage.removeItem('rpoVocabMissed');render()">Clear missed list</button></div>`}
+function cram(){app.innerHTML=`<div class="card"><div class="word">2-Day Cram Sheet</div><div class="small">Read this 3 times tonight, then test yourself.</div><div class="grid" style="margin-top:12px">${words.map(x=>`<div class="pill"><b>${x.w}</b><br>${x.m}<br><span class="small">${x.p}</span></div>`).join('')}</div><button class="btn" style="width:100%;margin-top:14px" onclick="setMode('mc')">Start Test</button></div>`}
+render();
+</script></body></html>
